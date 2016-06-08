@@ -1,0 +1,69 @@
+<apex:page controller="MediaProductDetailController" standardStylesheets="false" showHeader="false" sideBar="false" docType="html-5.0" applyBodyTag="false" applyHtmlTag="false">
+
+<!-- Media Store Header Section -->
+<c:MediaStoreHead />
+<!-- /. Media Store Header Section -->
+
+<body>
+<apex:form id="product-form">
+ <div class="container">
+	<c:MediaStoreHeaderNavigation count="{!bucketSize}"/>
+	<div class="row">
+		<div class="col-md-7">
+			<a href="#">
+				<apex:outputPanel layout="none" rendered="{!NOT(productWrapper.isShow)}">
+					<img class="img-responsive" src="http://placehold.it/700x400" alt=""/>
+				</apex:outputPanel>
+
+				<apex:outputPanel layout="none" rendered="{!productWrapper.isShow}">
+					<apex:image styleClass="img-responsive" url="{!URLFOR($Action.Attachment.Download, productWrapper.attachmentId)}" />
+				</apex:outputPanel>
+			</a>
+		</div>
+		<div class="col-md-5">
+			<h3>
+				<apex:outputLink value="{!$Page.MediaProductDetail}">{!productWrapper.name}
+					<apex:param name="id" value="{!productWrapper.detailId}"/>
+				</apex:outputLink>
+			</h3>
+			<p>{!productWrapper.description}</p>
+			<p>
+				<strong>Type:</strong>
+				{!productWrapper.type}
+			</p>
+			<p>
+				<strong>Rating:</strong>
+				<apex:outputText value="{0, number, ###,##0.00}">
+					<apex:param value="{!productWrapper.rating}"/>
+				</apex:outputText>
+			</p>
+			<p>
+				<strong>Price:</strong>
+				<apex:outputText value="{0, number, ###,##0.00} $">
+					<apex:param value="{!productWrapper.price}"/>
+				</apex:outputText>
+			</p>
+			<apex:outputPanel layout="none" rendered="{!(productWrapper.isOrdered == true)}">
+			<h4>
+				<a href="{!productWrapper.accessLink}" target="_blank"><strong>{!$Label.BTN_Access_Link}</strong></a>
+			</h4>
+			</apex:outputPanel>
+
+			<apex:commandLink rendered="{!AND(NOT(productWrapper.isPreOrdered),NOT(productWrapper.isOrdered))}" action="{!productWrapper.add}" styleclass="btn btn-default btn-sm" reRender="product-form" value="Add"/>
+
+			<apex:commandLink rendered="{!AND(productWrapper.isPreOrdered,NOT(productWrapper.isOrdered))}" action="{!productWrapper.remove}" styleclass="btn btn-default btn-sm" reRender="product-form">
+				<span class="glyphicon glyphicon-ok"></span> Added
+			</apex:commandLink>
+			
+			<apex:outputPanel rendered="{!productWrapper.isOrdered}" layout="none">
+				<button type="button" class="btn btn-default btn-sm">
+					<span class="glyphicon glyphicon-barcode"></span> Ordered
+				</button>
+			</apex:outputPanel>
+		</div>
+	</div>
+</div>
+</apex:form>
+</body>
+
+</apex:page>

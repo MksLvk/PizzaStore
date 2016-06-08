@@ -1,0 +1,50 @@
+<apex:page sidebar="false" controller="FirstPageController">
+<apex:form >
+    <apex:pageBlock title="Acc Detail" id="ab">
+    
+        <apex:pageBlockSection columns="1" rendered="{!NOT(editMode) && myAccount != null}">
+            <apex:outputField value="{!myAccount.Name}"/>
+            <apex:outputField value="{!myAccount.Phone}"/>
+            <apex:outputField value="{!myAccount.Industry}"/>
+            <apex:outputField value="{!myAccount.Owner.Name}"/>
+            
+            <apex:commandButton action="{!edit}" value="Edit" rerender="ab"/>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection columns="1" rendered="{!editMode && myAccount != null}">
+
+            <apex:inputField value="{!myAccount.Name}"/>
+            <apex:inputField value="{!myAccount.Phone}"/>
+            <apex:inputField value="{!myAccount.Industry}"/>
+            <apex:inputField value="{!myAccount.Owner.Name}"/>
+            
+            <apex:commandButton action="{!save}" value="Save" rerender="ab"/>
+            <apex:commandButton action="{!cancel}" value="Cancel" rerender="ab"/>
+         </apex:pageBlockSection>
+         
+          <apex:pageBlockSection columns="1" rendered="{!myAccountList != null}">
+            <apex:pageBlockTable value="{!myAccountList}" var="a" >
+                        <apex:column value="{!a.Name}" />
+                        <apex:column value="{!a.Phone}"/>
+                        <apex:column value="{!a.Industry}"/>
+                        <apex:column value="{!a.Owner.Name}"/>             
+            </apex:pageBlockTable>
+         </apex:pageBlockSection>
+         
+         <apex:pageBlockSection columns="1" rendered="{!myAccountList != null}">
+             <apex:repeat value="{!myAccountList}" var="a">
+                 <div >
+                    <apex:outputLink value="/{!a.Id}">{!a.Name}</apex:outputLink>
+                    <apex:outputField value="{!a.Name}"/>
+                    <apex:outputField value="{!a.Phone}"/>
+                    <apex:outputField value="{!a.Industry}"/>
+                    <apex:outputField value="{!a.Owner.Name}"/>
+                    <br/>
+                 </div>
+             </apex:repeat>   
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+    
+</apex:form>
+</apex:page>

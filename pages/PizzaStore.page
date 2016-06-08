@@ -1,0 +1,129 @@
+<apex:page controller="PizzaController" standardStylesheets="false" showHeader="false" sideBar="false" docType="html-5.0" applyBodyTag="false" applyHtmlTag="false">
+
+<!-- Pizza Store Header Section -->
+<c:PizzaStoreHead />
+<!-- /. Pizza Store Header Section -->
+
+<body>
+<apex:form id="top-form">
+    <!-- Pizza Store Navigation Section -->
+    <c:PizzaStoreHeaderNavigation />
+    <!-- /. Pizza Store Navigation Section -->
+    <div class="container">
+		<div class="container-fluid">
+
+			<!-- Page Header -->
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Choose your pizza</h1>
+				</div>
+			</div>
+            <apex:commandLink styleClass="btn btn-success " action="{!addToOrder}" reRender="top-form" oncomplete="showAlert()">
+				Make order
+			</apex:commandLink>
+			    <script>
+                        function showAlert() {
+                                alert('Your order issued! Check your email.');
+                        }
+                </script>
+			<div class="panel panel-default">
+                <table class="table">
+					<thead>
+						<tr>
+							<th>Select</th>
+							<th>Amount</th>
+							<th>Pizza Base</th>
+							<th>Pizza Name</th>
+							<th>Ingredients</th>
+							<th>Price without base</th>
+						</tr>
+					</thead>
+					<tbody>
+						<apex:repeat value="{!pizzaWrapperList}" var="item">
+							<tr>
+							    <th >
+                                    <apex:inputCheckbox value="{!item.isChecked}"/>
+                                </th>
+								<td>
+								    <apex:selectList label="type" size="1" styleClass="form-control" value="{!item.amount}" >
+                                        <apex:selectOptions value="{!amountOptions}"/>
+                                    </apex:selectList>
+								</td>
+								<td>
+								    <apex:selectList label="type"  size="1" styleClass="form-control" value="{!item.base}" >
+                                        <apex:selectOptions value="{!baseOptions}"/>
+                                    </apex:selectList>
+								</td>
+								<td>
+								    {!item.name}
+								    <apex:outputPanel rendered="{!item.isCustom}" layout="none">
+						               <span class="label label-warning">Custom Pizza</span>
+					                </apex:outputPanel>
+								</td>
+								<td>
+								    {!item.ingredients}
+								</td>
+                                <td>
+                                    {!item.cost}$
+                                </td>    
+							</tr>
+						</apex:repeat>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</apex:form>
+<apex:form id="bottom-form">
+
+    <div class="container">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Construct your own pizza</h1>
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+			    <div display="inline-block" >
+			        <h4>Pizza Name: </h4>
+			        <apex:inputTextarea value="{!customPizzaName}" richText="false" style="height: 32.8977px" /><br/>
+			    	<apex:commandLink styleClass="btn btn-info" action="{!addCustomPizza}" reRender="top-form" >
+						<span class="glyphicon glyphicon-barcode"></span> Create
+					</apex:commandLink>
+                </div>
+                
+
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+							    Select
+							</th>
+							<th>
+							    Ingredients
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<apex:repeat value="{!pizzaIngredientWrapperList}" var="item">
+							<tr>
+							    <th >
+							        <apex:inputCheckbox value="{!item.isChecked}"/>
+							    </th>
+								<td>
+								    {!item.name}
+								</td>
+							</tr>
+						</apex:repeat>
+					</tbody>
+				</table>
+			</div>
+        </div>
+	</div>
+
+</apex:form>
+</body>
+
+</apex:page>

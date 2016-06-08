@@ -1,0 +1,17 @@
+<apex:component >
+	<!-- Footer -->
+	<footer>
+		<div class="row">
+			<div class="col-lg-12">
+				<p>Copyright &copy; Awesome Media Store 2016</p>
+			</div>
+		</div>
+		<!-- /.row -->
+	</footer>
+
+	<!-- jQuery -->
+	<script src="{!$Resource.training_assets}/vendor/jquery-1.12.3.min.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="{!$Resource.training_assets}/vendor/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+</apex:component>

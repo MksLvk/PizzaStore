@@ -1,0 +1,175 @@
+<apex:page controller="MediaShopCartController" standardStylesheets="false" showHeader="false" sideBar="false" docType="html-5.0" applyBodyTag="false" applyHtmlTag="false">
+
+<!-- Media Store Header Section -->
+<c:MediaStoreHead />
+<!-- /. Media Store Header Section -->
+<style>
+.sl{
+
+   width: 300px;
+
+}
+.mb{
+
+   width: 100%;
+
+}
+
+.table>thead>tr>th:hover {
+    background: #9d9d9d; 
+   }
+
+</style>
+<body>
+<apex:form id="bucket-form">
+	<!-- Media Store Navigation Section -->
+	<c:MediaStoreHeaderNavigation count="{!bucketSize}"/>
+	<!-- /. Media Store Navigation Section -->
+
+	<!-- Page Content -->
+	<div class="container">
+		<div class="container-fluid">
+
+			<!-- Page Header -->
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Cart</h1>
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<!-- Default panel contents -->
+				
+				<!--<div class="panel-body">
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis aperiam sequi ab labore saepe id, consectetur, provident nulla itaque laborum, excepturi temporibus ducimus nisi repudiandae commodi. Sit perspiciatis itaque nulla.</p>
+				</div>-->
+				<div class="row">
+				    <div class="col-lg-12">
+    				    <b><font color="#337ab7">Filter:</font></b>
+    				    
+                        <apex:selectList label="type" id="type-options" value="{!typeFilter}" size="1" styleClass="form-control sl">
+                            <apex:selectOptions value="{!typeOptions}"/>
+                        </apex:selectList>
+                        
+                        <apex:commandLink styleClass="btn btn-default btn-xs" action="{!retrieveBucketData}" reRender="bucket-form">
+        					Get Data	
+        				</apex:commandLink>
+        				<hr/>
+    				</div>
+				</div>
+				
+				<div class="row">
+                    <div class="col-sm-12">
+                        <!--<b><font color="#337ab7">Sorting:</font></b>
+                        
+                        <apex:selectList label="type" id="sort-options" value="{!sortKey}" size="1" styleClass="form-control">
+                            <apex:selectOptions value="{!sortOptions}"/>
+                        </apex:selectList>
+                    
+                        
+    				    
+                        <apex:commandLink styleClass="btn btn-default btn-xs" action="{!retrieveBucketData}" reRender="bucket-form">
+    					    Sort	
+    				    </apex:commandLink>-->
+    				    <!--<apex:inputCheckbox value="{!sortDesc}">
+    				        <b><font color="#337ab7">Sorting order "DESC" </font></b>
+    				    </apex:inputCheckbox>-->
+                    </div>
+
+                </div>
+				<!-- Table -->
+				<table class="table">
+					<thead>
+						<tr>
+							<th>#</th>
+							<apex:repeat value="{!fields}" var="fld">
+							    <th data-id="{!fld.FieldPath}" onclick="th_click(this)">
+							        <!-- <apex:commandLink action="{!retrieveBucketData}" styleClass="btn btn-default btn-xs mb" reRender="bucket-form" value="{!fld.label}">
+							            <apex:param name="sortKey" value="{!fld.FieldPath}"
+               
+                                            assignTo="{!sortKey}"/>
+							                	
+    				                </apex:commandLink>-->
+    				                {!fld.label}
+							    </th>
+							</apex:repeat>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<apex:variable value="{!1}" var="row_index"/>
+						<apex:repeat value="{!items}" var="item">
+							<tr>
+								<th scope="row">
+									<apex:outputLink value="{!$Page.MediaProductDetail}">{!row_index}
+										<apex:param name="id" value="{!item.Media_Product__c}"/>
+									</apex:outputLink>
+								</th>
+								<apex:repeat value="{!fields}" var="fld">
+								    <td>{!item[fld]}</td>
+								</apex:repeat>
+								<!--<td>
+									<span class="price-before">{!IF(item.Media_Discount__c == null, '', item.Media_Product__r.Price__c)}</span>
+									<span class="{!IF(item.Media_Discount__c == null, '', 'price-after')}">{!item.Cost__c}</span>
+								</td>-->
+								<td>
+									<input type="text" class="hidden" data-id="{!item.Id}" data-type="{!item.Media_Product__r.Type__c}"/>
+									<button type="button" class="btn btn-default btn-xs" onclick="coupon_click(this);">
+										<span class="glyphicon glyphicon-barcode"></span> Coupon
+									</button>
+
+									<apex:commandLink styleClass="btn btn-default btn-xs" action="{!remove}" reRender="bucket-form">
+										<apex:param assignTo="{!detailId}" value="{!item.Id}" name="detailId"/>
+										<span class="glyphicon glyphicon-remove"></span> Remove
+									</apex:commandLink>
+								</td>
+							</tr>
+							<apex:variable var="row_index" value="{!row_index + 1}"/>
+						</apex:repeat>
+					</tbody>
+				</table>
+			</div>
+			<apex:actionFunction name="coupon" action="{!coupon}" reRender="bucket-form">
+				<apex:param assignTo="{!detailId}" value="" name="detailId"/>
+				<apex:param assignTo="{!detailType}" value="" name="detailType"/>
+				<apex:param assignTo="{!couponCode}" value="" name="couponCode"/>
+			</apex:actionFunction>
+			<script>
+				function coupon_click(el) {
+					var coupon_input = $(el).prev();
+					if ($(coupon_input).is(':visible')) {
+						console.log($(coupon_input).data('id'));
+						console.log($(coupon_input).data('type'));
+						console.log($(coupon_input).val());
+						coupon($(coupon_input).data('id'), $(coupon_input).data('type'), $(coupon_input).val());
+					}
+					else {
+						console.log('show');
+						$(coupon_input).removeClass('hidden');
+					}
+				}
+			</script>
+			
+			<apex:actionFunction name="sort" action="{!retrieveBucketData}" reRender="bucket-form">
+				<apex:param assignTo="{!sortKey}" value="" name="sortKey"/>
+			</apex:actionFunction>
+			<script>
+				function th_click(el) {
+					var coupon_input = $(el);
+					sort($(coupon_input).data('id'));
+				}
+			</script>
+
+			<hr/>
+
+			<!-- Media Store Footer Section -->
+			<c:MediaStoreFooter />
+			<!-- /. Media Store Footer Section -->
+
+		</div>
+	</div>
+
+</apex:form>
+</body>
+
+</apex:page>

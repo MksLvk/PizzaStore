@@ -1,0 +1,91 @@
+<apex:page controller="MediaStoreController" standardStylesheets="false" showHeader="false" sideBar="false" docType="html-5.0" applyBodyTag="false" applyHtmlTag="false">
+
+<!-- Media Store Header Section -->
+<c:MediaStoreHead />
+<!-- /. Media Store Header Section -->
+
+<body>
+<apex:form id="product-form">
+	<!-- Media Store Navigation Section -->
+	<c:MediaStoreHeaderNavigation count="{!bucketSize}"/>
+	<!-- /. Media Store Navigation Section -->
+
+	<!-- Page Content -->
+	<div class="container">
+		<div class="container-fluid">
+
+			<!-- Page Header -->
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Welcome!</h1>
+				</div>
+			</div>
+			
+			<apex:variable value="{!1}" var="row_index"/>
+			<apex:repeat value="{!productWrapperList}" var="product">
+				<div class="col-md-4 col-sm-6 col-lg-3 col-xs-12 portfolio-item">
+					<a href="#">
+						<apex:outputPanel layout="none" rendered="{!NOT(product.isShow)}">
+							<img class="img-responsive" src="http://placehold.it/400x250" alt=""/>
+							
+						</apex:outputPanel>
+
+						<apex:outputPanel layout="none" rendered="{!product.isShow}">
+							<apex:image styleClass="img-responsive" url="{!URLFOR($Action.Attachment.Download, product.attachmentId)}" />
+						</apex:outputPanel>
+					</a>
+					<h3>
+						<apex:outputLink value="{!$Page.MediaProductDetail}">{!product.name}
+							<apex:param name="id" value="{!product.detailId}"/>
+						</apex:outputLink>
+					</h3>
+					<p>{!product.description}</p>
+					<p>
+						<strong>Price:</strong>
+						<apex:outputText value=" {0, number, ###,##0.00} $">
+							<apex:param value="{!product.price}"/>
+						</apex:outputText>
+					</p>
+					<p>
+						<strong>Rating:</strong>
+						<apex:outputText value=" {0, number, ###,##0.00}">
+							<apex:param value="{!product.rating}"/>
+						</apex:outputText>
+					</p>
+
+					<apex:outputPanel rendered="{!AND(NOT(product.isPreOrdered),NOT(product.isOrdered))}" layout="none">
+						<apex:commandLink action="{!product.add}" styleClass="btn btn-default btn-sm" reRender="product-form">Add</apex:commandLink>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!AND(product.isPreOrdered,NOT(product.isOrdered))}" layout="none">
+						<apex:commandLink action="{!product.remove}" styleClass="btn btn-default btn-sm" reRender="product-form">
+							<span class="glyphicon glyphicon-ok"></span> Added
+						</apex:commandLink>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!product.isOrdered}" layout="none">
+						<button type="button" class="btn btn-default btn-sm">
+							<span class="glyphicon glyphicon-barcode"></span> Ordered
+						</button>
+					</apex:outputPanel>
+				</div>
+
+				<apex:outputPanel styleClass="clearfix visible-sm-block" rendered="{!MOD(row_index,2) == 0}"/>
+				<apex:outputPanel styleClass="clearfix visible-md-block" rendered="{!MOD(row_index,3) == 0}"/>
+				<apex:outputPanel styleClass="clearfix visible-lg-block" rendered="{!MOD(row_index,4) == 0}"/>
+
+				<apex:variable var="row_index" value="{!row_index + 1}"/>
+			</apex:repeat>
+
+			<hr/>
+
+			<!-- Media Store Footer Section -->
+			<c:MediaStoreFooter />
+			<!-- /. Media Store Footer Section -->
+		</div>
+	</div>
+
+</apex:form>
+</body>
+
+</apex:page>
